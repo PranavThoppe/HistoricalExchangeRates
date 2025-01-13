@@ -1,33 +1,69 @@
-from flask import Flask, jsonify, request
-import requests
-from flask_cors import CORS
+import React, { useState } from 'react';
+import './App.css';
 
-app = Flask(__name__)
-CORS(app)
+function App() {
+  const [currencyCode, setCurrencyCode] = useState('');
+  const [targetCurrency, setTargetCurrency] = useState('');
+  const [date, setDate] = useState('');
 
-def fetch_currency_data(base_currency=None, target_currency=None):
-    api_key = "cur_live_iALw06wQZCeHQuBiCaCz9JKaSnM3H3tkvlNk3sTF"  # Use your key directly
-    url = "https://api.currencyapi.com/v3/latest"
-    params = {"apikey": api_key}
+  const fetchCurrencyData = async () => {
+    try {
+      const query = new URLSearchParams({
+        target_currency: targetCurrency || undefined,
+        date: date || undefined,
+      }).toString();
 
-    if base_currency:
-        params["base_currency"] = base_currency
-    if target_currency:
-        params["currencies"] = target_currency
+      const response = await fetch(`http://localhost:5000/currency/${currencyCode}?${query}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Currency Data:', data);
+    } catch (error) {
+      console.error('Error fetching currency data:', error);
+    }
+  };
 
-    response = requests.get(url, params=params)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return {"error": f"Unable to fetch data (HTTP {response.status_code})"}
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Currency Data Fetcher</h1>
+        <div style={{ margin: '20px 0' }}>
+          <input
+            type="text"
+            placeholder="Base currency code (e.g., USD)"
+            value={currencyCode}
+            onChange={(e) => setCurrencyCode(e.target.value)}
+            style={{ padding: '10px', fontSize: '16px', width: '300px', marginBottom: '10px' }}
+          />
+        </div>
+        <div style={{ margin: '20px 0' }}>
+          <input
+            type="text"
+            placeholder="Target currency code (e.g., EUR)"
+            value={targetCurrency}
+            onChange={(e) => setTargetCurrency(e.target.value)}
+            style={{ padding: '10px', fontSize: '16px', width: '300px', marginBottom: '10px' }}
+          />
+        </div>
+        <div style={{ margin: '20px 0' }}>
+          <input
+            type="date"
+            placeholder="Date (YYYY-MM-DD)"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            style={{ padding: '10px', fontSize: '16px', width: '300px', marginBottom: '10px' }}
+          />
+        </div>
+        <button
+          onClick={fetchCurrencyData}
+          style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', borderRadius: '5px', backgroundColor: '#007BFF', color: 'white', border: 'none' }}
+        >
+          Fetch Currency Data
+        </button>
+      </header>
+    </div>
+  );
+}
 
-@app.route('/currency/<base_currency>', methods=['GET'])
-def get_currency_data(base_currency):
-    target_currency = request.args.get('target_currency', None)
-
-    # Fetch currency data
-    data = fetch_currency_data(base_currency, target_currency)
-    return jsonify(data)
-
-if __name__ == "__main__":
-    app.run(debug=True)
+export default App;

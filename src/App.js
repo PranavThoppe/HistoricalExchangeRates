@@ -1,16 +1,34 @@
 import React, { useState } from 'react';
 import './App.css';
 
+function InputField({ label, type = 'text', placeholder, value, onChange }) {
+  return (
+    <div className="input-field">
+      <label className="input-label">{label}</label>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className="input-box"
+      />
+    </div>
+  );
+}
+
 function App() {
   const [currencyCode, setCurrencyCode] = useState('');
-  
-  const handleInputChange = (e) => {
-    setCurrencyCode(e.target.value);
-  };
+  const [targetCurrency, setTargetCurrency] = useState('');
+  const [date, setDate] = useState('');
 
   const fetchCurrencyData = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/currency/${currencyCode}`);
+      const query = new URLSearchParams({
+        target_currency: targetCurrency || undefined,
+        date: date || undefined,
+      }).toString();
+
+      const response = await fetch(`http://localhost:5000/currency/${currencyCode}?${query}`);
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
@@ -24,14 +42,31 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Currency Converter</h1>
-        <input
-          type="text"
-          placeholder="Enter currency code (e.g., USD)"
+        <h1>Currency Data Fetcher</h1>
+        <InputField
+          label="Base Currency Code"
+          placeholder="e.g., USD"
           value={currencyCode}
-          onChange={handleInputChange}
+          onChange={(e) => setCurrencyCode(e.target.value)}
         />
-        <button onClick={fetchCurrencyData}>Fetch Currency Data</button>
+        <InputField
+          label="Target Currency Code"
+          placeholder="e.g., EUR"
+          value={targetCurrency}
+          onChange={(e) => setTargetCurrency(e.target.value)}
+        />
+        <InputField
+          label="Date"
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <button
+          onClick={fetchCurrencyData}
+          className="fetch-button"
+        >
+          Fetch Currency Data
+        </button>
       </header>
     </div>
   );
