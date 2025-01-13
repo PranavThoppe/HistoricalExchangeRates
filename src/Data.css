@@ -1,0 +1,58 @@
+/* General page layout */
+.data-page {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f9;
+  }
+  
+  .App-header {
+    text-align: center;
+    width: 100%;
+    padding: 20px;
+  }
+  
+  /* Back Button Styles */
+  .back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10; /* Ensures the button stays on top */
+  }
+  
+  .back-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Content Styling */
+  h1 {
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  pre {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin-top: 20px;
+    white-space: pre-wrap; /* Makes sure long lines wrap properly */
+    word-wrap: break-word;
+  }
+  
+  p {
+    color: #777;
+    font-size: 1.2rem;
+  }
+  

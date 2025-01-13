@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import Data from './Data'; // Import your Data component
 import './App.css';
 
 function InputField({ label, type = 'text', placeholder, value, onChange }) {
@@ -16,7 +18,8 @@ function InputField({ label, type = 'text', placeholder, value, onChange }) {
   );
 }
 
-function App() {
+function Home() {
+  const navigate = useNavigate();
   const [currencyCode, setCurrencyCode] = useState('');
   const [targetCurrency, setTargetCurrency] = useState('');
   const [date, setDate] = useState('');
@@ -27,13 +30,20 @@ function App() {
         target_currency: targetCurrency || undefined,
         date: date || undefined,
       }).toString();
-
+  
       const response = await fetch(`http://localhost:5000/currency/${currencyCode}?${query}`);
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      console.log('Currency Data:', data);
+  
+      // Pass both the data and the currency code
+      navigate('/data', { 
+        state: { 
+          data,
+          currencyCode: currencyCode.toUpperCase() 
+        }
+      });
     } catch (error) {
       console.error('Error fetching currency data:', error);
     }
@@ -69,6 +79,15 @@ function App() {
         </button>
       </header>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/data" element={<Data />} /> {/* Use the imported Data component */}
+    </Routes>
   );
 }
 
