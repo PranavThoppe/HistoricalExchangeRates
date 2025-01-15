@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 def fetch_currency_data(base_currency=None, target_currency=None, date=None):
-    api_key = "cur_live_iALw06wQZCeHQuBiCaCz9JKaSnM3H3tkvlNk3sTF"  # Use your API key
+    api_key = "##################################"  # Use your API key
     url = "https://api.currencyapi.com/v3/"
     url += "historical" if date else "latest"
 
